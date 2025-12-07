@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -129,8 +130,7 @@ static int handle_packets(int sockfd, int *game_over) {
             }
             msg[len] = '\0';
             printf(">>>%s\n", msg);
-            if (strcmp(msg, "server-overloaded") == 0 ||
-                strcmp(msg, "Game Over!") == 0) {
+            if (strcmp(msg, "Game Over!") == 0) {
                 *game_over = 1;
                 free(msg);
                 return 0;
@@ -164,9 +164,8 @@ static int check_overloaded_message(int sockfd) {
             }
             msg[len] = '\0';
             printf(">>>%s\n", msg);
-            int overloaded = (strcmp(msg, "server-overloaded") == 0);
             free(msg);
-            return overloaded;
+            return 1;
         }
     }
     return 0;
@@ -213,7 +212,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 #else
-    if (inet_pton(AF_INET, &addr.sin_addr, server_ip) <= 0) {
+    if (inet_pton(AF_INET, server_ip, &addr.sin_addr) <= 0) {
         perror("inet_pton");
         close(sockfd);
         return 1;
